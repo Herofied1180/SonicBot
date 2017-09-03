@@ -2,6 +2,7 @@ module.exports.botInit = function init(TokeArg, BotName) {
 //Inital Consts and Variables
 const Discord = require('discord.js');
 const client = client1 = new Discord.Client();
+const YTDL = require('ytdl-core');
 Toke = TokeArg;
 
 
@@ -27,6 +28,24 @@ function cmd(int){
 		console.log('cmd(1); Is currently not finished yet. Please try again later.')
 	}
 };
+
+//Define play Function
+function play(connection, message) {
+	var server = servers[message.guild.id];
+
+	server.dispatcher = connection.playStream(YTDL(server.queue[0], {filter: "audioonly"}));
+
+	server.queue.shit();
+
+	server.dispatcher.on("end", function() {
+		if (server.queue[0]) play(connection, message);
+		else connection.disconnect();
+	});
+}
+
+//Servers Object
+var servers = {};
+
 
 //Responds Bot is Ready When Script is Ready
 client.on('ready', () => {
@@ -64,7 +83,8 @@ client.on('message', function(message) {
 
 	//Help
 	if (message.content == char + 'help') {
-		message.channel.send("```Commands: \n "+char+"help \n "+char+"ping \n "+char+"embed \n "+char+"reply \n "+char+"shutdown \n "+char+"setgame \n "+char+"setprefix \n "+char+"author \n "+char+"invite \nEnd Of Commands```");
+		message.channel.send("```Commands: \n "+char+"help \n "+char+"ping \n "+char+"embed \n "+char+"reply \n "+char+"shutdown \n "+char+"setgame \n "+char+"setprefix \n "+char+"author \n "+char+"invite \n "+char+"play \n "+char+"stop \n "+char+"skip \nEnd Of Commands```");
+		message.channel.send("```Music Commands: \n "+char+"play \n "+char+"stop \n "+char+"skip \nEnd Of Music Commands```")
 	}
 
 //Ping
@@ -137,6 +157,44 @@ client.on('message', function(message) {
 	if (message.content == char + 'invite') {
 		message.author.send('https://discord.gg/XdVxzPA');
 		message.channel.send('Invite sent.');
+	}
+
+//Play
+	if (message.content.startsWith(char + 'play')) {
+		const args = message.content.split(' ')
+		if (!args[1]) {
+			message.channel.send('Please Include A Link');
+			return;
+		}
+
+		if (!message.member.voiceChannel) {
+			message.channel.send('Please Connect To a Voice Channel');
+			return;
+		}
+		if (!servers[message.guild.id]) servers[message.guild.id] = {
+			queue: []
+		};
+		var server = servers[message.guild.id];
+
+		if(!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection){
+			play(connection, message);
+		});
+
+			server.queue.push(args[1]);
+	}
+
+//Skip
+	if (message.content == char + 'skip') {
+		var server = servers[message.guild.id];
+
+		if (server.dispatcher) server.dispatcher.end();
+	}
+
+//Stop
+	if (message.content == char + 'stop') {
+		var server = servers[message.guild.id];
+
+		if (message.guild.voiceConnection) message.guild.voiceConnection.disconnect();
 	}
 
 

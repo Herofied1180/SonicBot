@@ -1,4 +1,10 @@
 {
   "name": "",
-  "version": ""
+  "version": "",
+  "dependencies": {
+    "discord.js": "^11.1.0",
+    "ffmpeg": "0.0.4",
+    "opusscript": "0.0.3",
+    "ytdl-core": "^0.17.1"
+  }
 }

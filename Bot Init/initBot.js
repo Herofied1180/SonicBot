@@ -39,15 +39,19 @@ client.on('ready', () => {
 });
 
 
-if(message.guild.id == '283441973984231426') {
-	char = '+'
-}
-
-
 //Official setGame Function
 function setGame(gameName) {
 	client.user.setPresence({ game: { name: gameName, type: 0 } });
 }
+
+
+//Welcome Message
+client.on('guildMemberAdd', function(member) {
+	member.guild.channels.find("name", "welcome").sendMessage("Welcome " + member.toString() + " to the server!");
+
+
+});
+
 
 
 //Commands Explination:
@@ -55,24 +59,22 @@ function setGame(gameName) {
 
 //Commands
 
-//Help
+
 client.on('message', function(message) {
+
+	//Help
 	if (message.content == char + 'help') {
-		message.channel.send("```Commands: \n "+char+"help \n "+char+"ping \n "+char+"embed \n "+char+"reply \nEnd Of Commands```");
+		message.channel.send("```Commands: \n "+char+"help \n "+char+"ping \n "+char+"embed \n "+char+"reply \n "+char+"shutdown \n "+char+"setgame \n "+char+"setprefix \n "+char+"author \n "+char+"invite \nEnd Of Commands```");
 	}
-});
 
 //Ping
-client.on('message', function(message) {
   if (message.content === char + 'ping') {
     message.reply('pong');
   }
-});
 
 //Shutdown
-client.on('message', function(message) {
 	if (message.content == char + "shutdown") {
-		if(message.member.roles.some(r=>[BotName+' Admin', 'Admin', 'Head Admin', 'Owner'].includes(r.name)) ) {
+		if(message.author.id == '209015289990348800') {
   			//Has One of Specified Roles
 		message.channel.send('Shutdown '+BotName+'.');
 		client.destroy((err) => {
@@ -83,30 +85,25 @@ client.on('message', function(message) {
   			message.reply('Insufficient Permissions'); //Confirm The Player Has Insufficient Permissions
 		}
 	}
-});
 
 //Embed
-client.on('message', function(message) {
-	if (message.content == char + "embed") {
+	if (message.content.startsWith == char + "embed") {
+		const args = message.content.split(/\s+/g).slice(1);
 		message.channel.sendEmbed(new Discord.RichEmbed()
-			.setDescription("Description")
-			.setTitle("Title")
+			.setDescription(args[0])
+			.setTitle(args[1])
 			.setColor("#4bf442")
 		);
 	}
-});
 
 //Reply
-client.on('message', function(message) {
   if (message.content === char + 'reply') {
     message.channel.send("What's up "+message.author.toString()+'!');
   }
-});
 
 //SetGame
-client.on('message', function(message) {
 	if (message.content.startsWith(char + 'setgame')) {
-		if(message.member.roles.some(r=>[BotName+' Admin', 'Admin', 'Head Admin', 'Owner'].includes(r.name)) ) {
+		if(message.author.id == '209015289990348800') {
   			//Has One of Specified Roles
   			const args = message.content.split(/\s+/g).slice(1);
   			let gameStatus = args.join(' '); //The Game To Set
@@ -117,13 +114,12 @@ client.on('message', function(message) {
   			message.reply('Insufficient Permissions'); //Confirm The Player Has Insufficient Permissions
 		}
 	}
-});
 
 //SetPrefix
-client.on('message', function(message) {
 	if (message.content.startsWith(char + 'setprefix')) {
-		if(message.member.roles.some(r=>[BotName+' Admin', 'Admin', 'Head Admin', 'Owner'].includes(r.name)) ) {
+		if(message.author.id == '209015289990348800') {
   			//Has One of Specified Roles
+  			const args = message.content.split(/\s+/g).slice(1);
   			let char = args.join(' '); //The Prefix To Set
   			message.channel.send('Command Prefix set to '+char+' .'); //Confirm The Command Prefix Was Set
 		} else {
@@ -131,10 +127,20 @@ client.on('message', function(message) {
   			message.reply('Insufficient Permissions'); //Confirm The Player Has Insufficient Permissions
 		}
 	}
+
+//Author
+	if (message.content == char + 'author') {
+		message.channel.send(message.author.toString());
+	}
+
+//Invite
+	if (message.content == char + 'invite') {
+		message.author.send('https://discord.gg/XdVxzPA');
+		message.channel.send('Invite sent.');
+	}
+
+
 });
-
-
-
 //Finalizing Steps
 
 //Login to the Bot's User Through: User Token

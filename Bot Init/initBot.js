@@ -35,7 +35,7 @@ function play(connection, message) {
 
 	server.dispatcher = connection.playStream(YTDL(server.queue[0], {filter: "audioonly"}));
 
-	server.queue.shit();
+	server.queue.shift();
 
 	server.dispatcher.on("end", function() {
 		if (server.queue[0]) play(connection, message);
@@ -178,6 +178,7 @@ client.on('message', function(message) {
 
 		if(!message.guild.voiceConnection) message.member.voiceChannel.join().then(function(connection){
 			play(connection, message);
+			message.channel.send('Playing Song '+args[1]+'.');
 		});
 
 			server.queue.push(args[1]);
@@ -188,6 +189,7 @@ client.on('message', function(message) {
 		var server = servers[message.guild.id];
 
 		if (server.dispatcher) server.dispatcher.end();
+		message.channel.send('Please do not use this command. Reason: Too Buggy.')
 	}
 
 //Stop
@@ -195,6 +197,7 @@ client.on('message', function(message) {
 		var server = servers[message.guild.id];
 
 		if (message.guild.voiceConnection) message.guild.voiceConnection.disconnect();
+		message.channel.send('Stopped Playing Music.');
 	}
 
 

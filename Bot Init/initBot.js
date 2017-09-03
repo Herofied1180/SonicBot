@@ -39,6 +39,11 @@ client.on('ready', () => {
 });
 
 
+if(message.guild.id == '283441973984231426') {
+	char = '+'
+}
+
+
 //Official setGame Function
 function setGame(gameName) {
 	client.user.setPresence({ game: { name: gameName, type: 0 } });
@@ -67,7 +72,7 @@ client.on('message', function(message) {
 //Shutdown
 client.on('message', function(message) {
 	if (message.content == char + "shutdown") {
-		if(message.member.roles.some(r=>['Head Admin', 'Owner'].includes(r.name)) ) {
+		if(message.member.roles.some(r=>[BotName+' Admin', 'Admin', 'Head Admin', 'Owner'].includes(r.name)) ) {
   			//Has One of Specified Roles
 		message.channel.send('Shutdown '+BotName+'.');
 		client.destroy((err) => {
@@ -107,6 +112,20 @@ client.on('message', function(message) {
   			let gameStatus = args.join(' '); //The Game To Set
   			setGame(gameStatus); //Set The Specified Game Status
   			message.reply('The game status is now set to '+gameStatus+'.'); //Confirm The Game Status Was Set
+		} else {
+  			//Does Not Have One of Specified Roles
+  			message.reply('Insufficient Permissions'); //Confirm The Player Has Insufficient Permissions
+		}
+	}
+});
+
+//SetPrefix
+client.on('message', function(message) {
+	if (message.content.startsWith(char + 'setprefix')) {
+		if(message.member.roles.some(r=>[BotName+' Admin', 'Admin', 'Head Admin', 'Owner'].includes(r.name)) ) {
+  			//Has One of Specified Roles
+  			let char = args.join(' '); //The Prefix To Set
+  			message.channel.send('Command Prefix set to '+char+' .'); //Confirm The Command Prefix Was Set
 		} else {
   			//Does Not Have One of Specified Roles
   			message.reply('Insufficient Permissions'); //Confirm The Player Has Insufficient Permissions

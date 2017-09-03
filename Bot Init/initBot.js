@@ -87,12 +87,12 @@ client.on('message', function(message) {
 	}
 
 //Embed
-	if (message.content.startsWith == char + "embed") {
+	if (message.content.startsWith (char + "embed")) {
 		const args = message.content.split(/\s+/g).slice(1);
 		message.channel.sendEmbed(new Discord.RichEmbed()
-			.setDescription(args[0])
-			.setTitle(args[1])
-			.setColor("#4bf442")
+			.setDescription(args.slice(1).slice(1).join(' '))
+			.setTitle(args[0])
+			.setColor(args[1])
 		);
 	}
 
